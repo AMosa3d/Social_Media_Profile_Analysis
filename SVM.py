@@ -3,32 +3,58 @@ import csv
 import time
 from sklearn.feature_extraction.text import TfidfVectorizer
 
-X = []
-Y = []
-
+TrainingSentences = []
+TrainingLabels = []
+TestingSentences = []
+TestingLabels = []
 t0 = time.time()
 
 print("1) Reading Data ...")
-with open('Sentiment Analysis Dataset.csv', 'r', encoding="utf8") as csvfile:
+
+with open('train.csv', 'r', encoding="latin-1") as csvfile:
     readCSV = csv.reader(csvfile, delimiter=",")
     for row in readCSV:
-        X.append(row[3])
-        Y.append(row[1])
+        TrainingSentences.append(row[2])
+        TrainingLabels.append(row[1])
+
+with open('Sentiment Analysis Dataset.csv', 'r', encoding="latin-1") as csvfile:
+    readCSV = csv.reader(csvfile, delimiter=",")
+    for row in readCSV:
+        TestingSentences.append(row[3])
+        TestingLabels.append(row[1])
+
 
 print("2) Feature Extracting ...")
-vectorizer = TfidfVectorizer(min_df=0.05, max_df=0.8, sublinear_tf=True, use_idf=True)
+vectorizer = TfidfVectorizer()
 
-print("3) Training ...")
-X = vectorizer.fit_transform(X)
-#Y = vectorizer.fit_transform(Y)
-
-clf = svm.SVC()
-print("4) Fitting ...")
-clf.fit(X[2:100000], Y[2:100000])
+TestingSentences = TestingSentences[1:5002]
+TestingLabels = TestingLabels[1:5002]
 
 
-print("5) Predicting ...")
-t = vectorizer.transform(["Have played by Howard Elliot thingy album today.  I really like it.  Well done me"])
-hobba = clf.predict(t)
-print(hobba)
+TrainingSentences = vectorizer.fit_transform(TrainingSentences)
+
+
+clf = svm.SVC(kernel='rbf')
+print("3) Training and Fitting ...")
+clf.fit(TrainingSentences, TrainingLabels)
+
+
+print("4) Predicting ...")
+
+
+t = vectorizer.transform(["I love you"])
+
+correct = 0
+
+for i in range(0, len(TestingSentences)):
+    currentCorpse = [TestingSentences[i]]
+    currentCorpse = vectorizer.transform(currentCorpse)
+    predict = clf.predict(currentCorpse)
+    if predict == TestingLabels[i]:
+        correct = correct + 1
+
+accuracy = correct/len(TestingLabels)
+
+print(accuracy)
+
 print(time.time() - t0)
