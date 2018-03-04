@@ -29,8 +29,9 @@ def get_tweets(userName):
         new_tweets = api.user_timeline(screen_name=userName, count=200,max_id=oldest)
         all_tweets.extend(new_tweets)
         oldest = all_tweets[-1].id - 1
-        #the return list of tweets shof anta el response w akhtar htrg3 eh w 7oto
-        outtweets = [[tweet.id_str, tweet.created_at, tweet.text.encode("utf-8")] for tweet in all_tweets]
+        
+    #the return list of tweets shof anta el response w akhtar htrg3 eh w 7oto
+    outtweets = [[tweet.id_str, tweet.created_at, tweet.text.encode("utf-8")] for tweet in all_tweets]
 
     # convert the list to csv file
     with open('%s_tweets.csv' % userName, 'wb') as f:
