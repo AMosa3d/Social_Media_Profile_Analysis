@@ -6,10 +6,10 @@ maxTweets=200
 
 def get_tweets(userName):
     #authorize twitter using the keys that we got from dev.twitter
-    consumer_key = "IibibQUcX7Ssy1bteWKXFN89G"
-    consumer_secret = "XTu1aGLLJqmihDbHL9ofhM51GIfmSuezi64Jieakz6bmVh2hCc"
-    access_token = "155015907-KCa96Y9ZXGxSqUTMPHdJ6kmi3pZoZhvjGG1i966A"
-    access_token_secret = "mt1k6pWiEU5W7PVNib3YCDXFX7pAChiwCGPaLYhMbhOd4"
+    consumer_key = ""
+    consumer_secret = ""
+    access_token = "-"
+    access_token_secret = ""
     auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
     auth.set_access_token(access_token, access_token_secret)
     api = tweepy.API(auth)
