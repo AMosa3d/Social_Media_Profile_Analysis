@@ -7,6 +7,7 @@ from nltk.corpus import stopwords
 from nltk.stem.snowball import SnowballStemmer
 from collections import Counter
 import numpy as np
+import itertools
 
 def del_Punctutation(s):
     return re.sub("[\.\t\,\:;\(\)\_\.!\@\?\&\--]", "", s, 0, 0)
@@ -73,7 +74,6 @@ def main():
          # update the co-occurrence matrix in the both dimensions to make it also similar
          cooccurrences[center_id, left_id] += increment_weight
          cooccurrences[left_id, center_id] += increment_weight
-
 
 
 
