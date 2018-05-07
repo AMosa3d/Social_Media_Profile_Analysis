@@ -9,7 +9,9 @@ from numpy import zeros
 from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
 from keras.utils import to_categorical
+
 from keras.layers import Dense, Input, GlobalMaxPooling1D, LSTM , Bidirectional
+
 from keras.layers import Conv1D, MaxPooling1D, Embedding
 from keras.models import Model
 
@@ -18,6 +20,8 @@ from nltk.corpus import stopwords
 from nltk.stem.snowball import SnowballStemmer
 from keras.models import Sequential
 import re
+
+
 
 
 def del_punctutation(s):
@@ -84,7 +88,9 @@ def Train_Model(TrainingSentences, TrainingLabels):
     LSTM_Model = Sequential()
 
     LSTM_Model.add(Embedding(vocab_size, wordVectorSize, weights=[embedding_matrix], input_length=maxWordsLengthPerSentence, trainable=False))
+
     LSTM_Model.add(Bidirectional(LSTM(128, dropout=0.2, recurrent_dropout=0.2)))
+
     LSTM_Model.add(Dense(1, activation='sigmoid'))
 
 
@@ -93,6 +99,7 @@ def Train_Model(TrainingSentences, TrainingLabels):
         optimizer='adam',
         metrics=['accuracy']
     )
+
 ###rmsprop  adam
     leng = round(len(TrainingSentences)*.8)
     LSTM_Model.fit(
@@ -104,8 +111,10 @@ def Train_Model(TrainingSentences, TrainingLabels):
 
     leng = leng+1
     loss, accuarcy = LSTM_Model.evaluate(
+
         TrainingSentencesSequences[leng:],
         TrainingLabels[leng:],
+
         batch_size=32
     )
 
@@ -119,6 +128,7 @@ def Train_Model(TrainingSentences, TrainingLabels):
 def LoadData():
     TrainingSentences = []
     TrainingLabels = []
+
     with open('Sentiment Analysis Dataset.csv', 'r', encoding="latin-1") as csvfile:
         readCSV = csv.reader(csvfile, delimiter=",")
         for row in readCSV:
