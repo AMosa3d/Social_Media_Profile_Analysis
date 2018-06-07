@@ -12,12 +12,13 @@ from keras.utils import to_categorical
 from keras.layers import Dense, Input, GlobalMaxPooling1D, LSTM , Bidirectional
 from keras.layers import Conv1D, MaxPooling1D, Embedding
 from keras.models import Model
-
+from sklearn.preprocessing import LabelEncoder
 import nltk
 from nltk.corpus import stopwords
 from nltk.stem.snowball import SnowballStemmer
 from keras.models import Sequential
 import re
+from keras.utils import np_utils
 
 
 def del_punctutation(s):
@@ -80,16 +81,22 @@ def Train_Model(TrainingSentences, TrainingLabels):
         if embedding_vector is not None:
             embedding_matrix[i] = embedding_vector
 
+    # encode class values as integers
+    encoder = LabelEncoder()
+    encoder.fit(TrainingLabels)
+    encoded_Y = encoder.transform(TrainingLabels)
+    # convert integers to dummy variables (i.e. one hot encoded)
+    dummy_y = np_utils.to_categorical(encoded_Y)
 
     LSTM_Model = Sequential()
 
     LSTM_Model.add(Embedding(vocab_size, wordVectorSize, weights=[embedding_matrix], input_length=maxWordsLengthPerSentence, trainable=False))
     LSTM_Model.add(Bidirectional(LSTM(128, dropout=0.2, recurrent_dropout=0.2)))
-    LSTM_Model.add(Dense(1, activation='sigmoid'))
+    LSTM_Model.add(Dense(10, activation='sigmoid'))
 
 
     LSTM_Model.compile(
-        loss='binary_crossentropy',
+        loss='categorical_crossentropy',
         optimizer='adam',
         metrics=['accuracy']
     )
@@ -97,21 +104,21 @@ def Train_Model(TrainingSentences, TrainingLabels):
     leng = round(len(TrainingSentences)*.8)
     LSTM_Model.fit(
         TrainingSentencesSequences[1:leng],
-                   TrainingLabels[1:leng],
-                   epochs=7,
+        dummy_y[1:leng],
+                   epochs=20,
       #  validation_data=(TrainingSentencesSequences[700001:800000], TrainingLabels[700001:800000])
     )
 
     leng = leng+1
     loss, accuarcy = LSTM_Model.evaluate(
         TrainingSentencesSequences[leng:],
-        TrainingLabels[leng:],
+        dummy_y[leng:],
         batch_size=32
     )
 
     print('Test score : ', loss)
     print('Test accuracy : ', accuarcy)
-    LSTM_Model.save("Pos_Neg.h5")
+    LSTM_Model.save("Emo.h5")
 
 
 
@@ -119,15 +126,13 @@ def Train_Model(TrainingSentences, TrainingLabels):
 def LoadData():
     TrainingSentences = []
     TrainingLabels = []
-    with open('Sentiment Analysis Dataset.csv', 'r', encoding="latin-1") as csvfile:
+    with open('Jan9-2012-tweets-clean2.csv', 'r', encoding="latin-1") as csvfile:
         readCSV = csv.reader(csvfile, delimiter=",")
         for row in readCSV:
-            TrainingSentences.append(row[3])
+            TrainingSentences.append(row[0])
             TrainingLabels.append(row[1])
 
 
-    TrainingSentences = TrainingSentences[1:]
-    TrainingLabels = [int(x) for x in TrainingLabels[1:]]
     return TrainingSentences, TrainingLabels
 
 def main():
