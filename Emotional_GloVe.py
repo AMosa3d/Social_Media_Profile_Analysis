@@ -129,7 +129,7 @@ def Train_Model(TrainingSentences, TrainingLabels, maxWordsLengthPerSentence):
     LSTM_Model.fit(
         TrainingSentencesSequences[1:leng],
                    TrainingLabels[1:leng],
-                   epochs=10,
+                   epochs=8,
                    validation_data=(TrainingSentencesSequences[leng:leng2], TrainingLabels[leng:leng2])
     )
 
@@ -199,8 +199,8 @@ def main():
     if not os.path.exists('emotional_model.h5'):
         TrainingSentences, TrainingLabels = LoadData()
         model = Train_Model(TrainingSentences, TrainingLabels, maxWordsLengthPerSentence)
-    else:
-        tokenizer, model = LoadTrainedModel()
+
+    tokenizer, model = LoadTrainedModel()
 
     TestingSentences = [
         "I am happy",
@@ -214,18 +214,19 @@ def main():
     Res = []
 
     for i in range(len(Labels)):
-        if i == 0:
+        if Labels[i] == 0:
             Res.append('Neutral')
-        elif i == 1:
+        elif Labels[i] == 1:
             Res.append('Happy')
-        elif i == 2:
+        elif Labels[i] == 2:
             Res.append('Sad')
-        elif i == 3:
+        elif Labels[i] == 3:
             Res.append('Hate')
-        elif i == 4:
+        elif Labels[i] == 4:
             Res.append('Anger')
 
-    return Res
+    print(Res)
+
 
 if __name__ == '__main__':
     main()

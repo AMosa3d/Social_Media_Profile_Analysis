@@ -7,7 +7,7 @@ from nltk.stem.snowball import SnowballStemmer
 from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
 from keras.models import Sequential
-from keras.layers import Dense, Embedding, LSTM
+from keras.layers import Dense, Embedding, LSTM, Bidirectional
 import re
 
 def del_punctutation(s):
@@ -96,7 +96,7 @@ def Train_Model(WordEmbeddingModel, TrainingSentences, TrainingLabels):
     LSTM_Model = Sequential()
 
     LSTM_Model.add(Embedding(vocab_size, wordVectorSize, weights=[embedding_matrix], input_length=maxWordsLengthPerSentence, trainable=False))
-    LSTM_Model.add(LSTM(128, dropout=0.2, recurrent_dropout=0.2))
+    LSTM_Model.add(Bidirectional(LSTM(128, dropout=0.2, recurrent_dropout=0.2)))
     LSTM_Model.add(Dense(1, activation='sigmoid'))
 
 
