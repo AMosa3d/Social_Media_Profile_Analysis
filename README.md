@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Emotional Sentiment Analysis in Python 3.6.5.
 using 
 1-tweepy
