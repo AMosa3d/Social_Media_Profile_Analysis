@@ -11,9 +11,12 @@ from keras.layers import Dense, Embedding, LSTM, Bidirectional
 import re
 from sklearn.preprocessing import LabelEncoder
 from keras.utils import np_utils
-from collections import Counter
+import os
 from numpy import asarray
 from numpy import zeros
+import pickle
+from keras.models import load_model
+from keras.models import save_model
 
 def del_punctutation(s):
     return re.sub("[\.\t\,\:;\(\)\_\.!\@\?\&\--]", "", s, 0, 0)
@@ -57,10 +60,10 @@ def LoadWord2VecModel():
 
     return model
 
-def Train_Model(WordEmbeddingModel, TrainingSentences, TrainingLabels):
+def Train_Model(TrainingSentences, TrainingLabels, maxWordsLengthPerSentence):
 
     """HyperParameters"""
-    maxWordsLengthPerSentence = 25
+
     wordVectorSize = 100
 
 
@@ -69,6 +72,8 @@ def Train_Model(WordEmbeddingModel, TrainingSentences, TrainingLabels):
     #2 - create Tokenizer
     tokenizer = Tokenizer()
     tokenizer.fit_on_texts(TrainingSentences)
+    with open('emotional_tokenizer.pickle', 'wb') as handle:
+        pickle.dump(tokenizer, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
     vocab_size = len(tokenizer.word_index)+1
 
@@ -78,7 +83,7 @@ def Train_Model(WordEmbeddingModel, TrainingSentences, TrainingLabels):
     #4 - pad sequences
     TrainingSentencesSequences = pad_sequences(TrainingSentencesSequences, maxlen=maxWordsLengthPerSentence)
 
-    #5 - Load Word2Vec and build dict - completed and passed in the parameter
+    #5 - Load GloVe and build dict - completed and passed in the parameter
     embeddings_index = dict()
     f = open('glove.twitter.27B.100d.txt', encoding="utf8")
     for line in f:
@@ -98,6 +103,8 @@ def Train_Model(WordEmbeddingModel, TrainingSentences, TrainingLabels):
         embedding_vector = embeddings_index.get(word)
         if embedding_vector is not None:
             embedding_matrix[i] = embedding_vector
+
+
 
     encoder = LabelEncoder()
     encoder.fit(TrainingLabels)
@@ -136,48 +143,29 @@ def Train_Model(WordEmbeddingModel, TrainingSentences, TrainingLabels):
     print('Test score : ', loss)
     print('Test accuracy : ', accuarcy)
 
-    S = [
-        "I am happy",
-        "I am tired",
-        "I am sad",
-        "I am afraid",
-        "I am angry",
-
-    ]
-
-    S = tokenizer.texts_to_sequences(S)
-
-    # 4 - pad sequences
-    S = pad_sequences(S, maxlen=maxWordsLengthPerSentence)
-    y = LSTM_Model.predict(S)
-    y1 = LSTM_Model.predict_classes(S)
-    y2 = LSTM_Model.predict_proba(S)
-
-    print("XD")
+    LSTM_Model.save('emotional_model.h5')
 
 
     return LSTM_Model
+
+def Test_Model(LSTM_Model, TestingSentences, tokenizer, maxWordsLengthPerSentence):
+
+
+
+    TestingSentences = tokenizer.texts_to_sequences(TestingSentences)
+
+    # 4 - pad sequences
+    TestingSentences = pad_sequences(TestingSentences, maxlen=maxWordsLengthPerSentence)
+
+    y1 = LSTM_Model.predict_classes(TestingSentences)
+
+    return y1
 
 
 def LoadData():
     TrainingSentences = []
     TrainingLabels = []
-    '''
-    with open('Jan9-2012-tweets-clean2.csv', 'r', encoding="latin-1") as csvfile:
-        readCSV = csv.reader(csvfile, delimiter=",")
-        for row in readCSV:
-            if row[1] != '':
-                TrainingSentences.append(row[2])
-                TrainingLabels.append(row[1])
-    '''
 
-    '''with open('text_emotion.csv', 'r', encoding="latin-1") as csvfile:
-        readCSV = csv.reader(csvfile, delimiter=",")
-        for row in readCSV:
-            if row[1] != '':
-                TrainingSentences.append(row[3])
-                TrainingLabels.append(row[1])
-    '''
     with open('data.bak.csv', 'r', encoding="latin-1") as csvfile:
         readCSV = csv.reader(csvfile, delimiter=",")
         for row in readCSV:
@@ -185,9 +173,6 @@ def LoadData():
                 TrainingSentences.append(row[0])
                 TrainingLabels.append(row[1])
 
-    c = Counter(TrainingLabels)
-    print(c)
-    print("XD")
 
     perm = np.random.permutation(len(TrainingSentences))
     ShuffledSentences = []
@@ -199,20 +184,48 @@ def LoadData():
 
     return ShuffledSentences, ShuffledLabels
 
-def PreProcess(TrainingSentences, TrainingLabels):
-    return
+def LoadTrainedModel():
+    with open('emotional_tokenizer.pickle', 'rb') as handle:
+        tokenizer = pickle.load(handle)
+
+    model = load_model('emotional_model.h5')
+
+    return tokenizer, model
 
 def main():
-
-    """Loading model of WordEmbedding Technique"""
-    WordEmbeddingModel = LoadWord2VecModel()
-
-    TrainingSentences, TrainingLabels = LoadData()
-
-    model = Train_Model(WordEmbeddingModel, TrainingSentences, TrainingLabels)
+    maxWordsLengthPerSentence = 25
 
 
+    if not os.path.exists('emotional_model.h5'):
+        TrainingSentences, TrainingLabels = LoadData()
+        model = Train_Model(TrainingSentences, TrainingLabels, maxWordsLengthPerSentence)
+    else:
+        tokenizer, model = LoadTrainedModel()
 
+    TestingSentences = [
+        "I am happy",
+        "I am tired",
+        "I am sad",
+        "I am afraid",
+        "I am angry",
+    ]
+
+    Labels = Test_Model(model, TestingSentences, tokenizer, maxWordsLengthPerSentence)
+    Res = []
+
+    for i in range(len(Labels)):
+        if i == 0:
+            Res.append('Neutral')
+        elif i == 1:
+            Res.append('Happy')
+        elif i == 2:
+            Res.append('Sad')
+        elif i == 3:
+            Res.append('Hate')
+        elif i == 4:
+            Res.append('Anger')
+
+    return Res
 
 if __name__ == '__main__':
     main()
