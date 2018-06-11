@@ -129,7 +129,7 @@ def Train_Model(TrainingSentences, TrainingLabels, maxWordsLengthPerSentence):
     LSTM_Model.fit(
         TrainingSentencesSequences[1:leng],
                    TrainingLabels[1:leng],
-                   epochs=8,
+                   epochs=9,
                    validation_data=(TrainingSentencesSequences[leng:leng2], TrainingLabels[leng:leng2])
     )
 
@@ -192,7 +192,7 @@ def LoadTrainedModel():
 
     return tokenizer, model
 
-def main():
+def main(input):
     maxWordsLengthPerSentence = 25
 
 
@@ -210,7 +210,7 @@ def main():
         "I am angry",
     ]
 
-    Labels = Test_Model(model, TestingSentences, tokenizer, maxWordsLengthPerSentence)
+    Labels = Test_Model(model, input, tokenizer, maxWordsLengthPerSentence)
     Res = []
 
     for i in range(len(Labels)):
@@ -225,9 +225,4 @@ def main():
         elif Labels[i] == 4:
             Res.append('Anger')
 
-    print(Res)
-
-
-if __name__ == '__main__':
-    main()
-
+    return Res
