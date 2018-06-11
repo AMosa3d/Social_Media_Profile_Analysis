@@ -1,9 +1,15 @@
 import TESTLSTMMODEL
 import Emotional_GloVe
+import getTweets
+import re
+
+def del_Punctutation(s):
+    return re.sub(r'^https?://.[\r\n]', '',s, flags=re.MULTILINE)
 
 def main():
 
-    tweets = ["i hate mimo waked", "i love mimo"]
+    tweets = getTweets.get_tweets('@Ah_Samir1907')
+    tweets = [del_Punctutation(tweet[0]) for tweet in tweets]
 
     yhat1 =TESTLSTMMODEL.main(tweets)
     counter = 0
