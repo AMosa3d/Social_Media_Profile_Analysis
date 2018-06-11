@@ -3,6 +3,7 @@ from keras.preprocessing.text import Tokenizer
 from keras.models import load_model
 import csv
 from keras.preprocessing.sequence import pad_sequences
+import pickle
 
 def LoadData():
     TrainingSentences = []
@@ -18,16 +19,31 @@ def LoadData():
     TrainingLabels = [int(x) for x in TrainingLabels[1:]]
     return TrainingSentences, TrainingLabels
 
-def main():
- maxWordsLengthPerSentence = 25
- TrainingSentences, TrainingLabels = LoadData()
+def main(tweets):
+ #maxWordsLengthPerSentence = 25
+ #TrainingSentences, TrainingLabels = LoadData()
 
  # load model from single file
 
+
  model_Lstm = load_model('Pos_Neg.h5')
+ '''
  tokenizer = Tokenizer()
  tokenizer.fit_on_texts(TrainingSentences)
+ with open('Pos_Neg_tokenizer.pickle', 'wb') as handle:
+     pickle.dump(tokenizer, handle, protocol=pickle.HIGHEST_PROTOCOL)
+'''
 
+ with open('Pos_Neg_tokenizer.pickle', 'rb') as handle:
+        tokenizer = pickle.load(handle)
+
+ X1 = tweets
+ TrainingSentencesSequences = tokenizer.texts_to_sequences(X1)
+ TrainingSentencesSequences = pad_sequences(TrainingSentencesSequences, maxlen=25)
+ yhat1 = model_Lstm.predict_classes(TrainingSentencesSequences)
+ return yhat1
+
+'''
  # make predictions
  X1 =["I Love Eating Apple",
       "I Hate Eating Apple",
@@ -53,10 +69,7 @@ def main():
       "i am so tried being here",
       "i am sad ,angry,hate every thing"]
 
- TrainingSentencesSequences = tokenizer.texts_to_sequences(X1)
- TrainingSentencesSequences = pad_sequences(TrainingSentencesSequences, maxlen=25)
- yhat1 = model_Lstm.predict_classes(TrainingSentencesSequences)
-
+ 
  counter =0
  for i in yhat1 :
      if (i==1):
@@ -74,7 +87,7 @@ def main():
 
 
  print(yhat2)
-
+ '''
 
 
 
