@@ -29,11 +29,11 @@ def get_tokens_list(Data):
 
     for i in range(1, len(Data)):
         #### to get the words from every sentences
-        t = []
+        t = ''
         tokens = nltk.word_tokenize(del_punctutation(Data[i].lower()))
         for token in tokens:
             if token not in stopWords:
-                t.append(token)
+                t = t + token
         #### add all tokens of the tweets to list
         tokensList.append(t)
 
