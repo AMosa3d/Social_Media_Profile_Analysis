@@ -51,7 +51,7 @@ def plot_emotional_function(Emotional_Res):
 
 
 def upload_image(image_path):
-    client_id = "b4080d81dbe5e9c"
+    client_id = ""
 
     im = pyimgur.Imgur(client_id)
     plot_image = im.upload_image(image_path, title="Uploading Plot")
@@ -116,8 +116,8 @@ def html_creator(avatar_url, handle_str, plot_path,Emotional_Res, Pos_Neg_Res, K
 
 
 def convert_html_to_image(html_file):
-    username = "Mokka47"
-    api_key = "9784bd49583665bf62eae49b34748094"
+    username = ""
+    api_key = ""
     file_name = ""
 
     try:
