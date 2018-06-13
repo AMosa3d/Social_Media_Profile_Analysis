@@ -155,9 +155,15 @@ def retrieve_common_keywords(Keywords,Pos_Neg_Res):
     common_neg_keywords = []
 
     for i in range(max_common_keywords):
-        common_pos_keywords.append(sorrted_keywords[i][0])
-        common_neg_keywords.append(sorrted_keywords[len(sorrted_keywords) - 1 - i][0])
+        pos_word = sorrted_keywords[i][0]
+        pos_word_freq = sorrted_keywords[i][1]
+        neg_word = sorrted_keywords[len(sorrted_keywords) - 1 - i][0]
+        neg_word_freq = sorrted_keywords[len(sorrted_keywords) - 1 - i][1]
 
+        if pos_word_freq > 0:
+            common_pos_keywords.append(pos_word)
+        if neg_word_freq < 0:
+            common_neg_keywords.append(neg_word)
 
     return common_pos_keywords, common_neg_keywords
 
