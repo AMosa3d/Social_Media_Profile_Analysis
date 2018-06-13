@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import pyimgur
 from collections import Counter
 import pdfcrowd
+from operator import itemgetter
 
 
 def get_values(Emotional_Res, labels):
@@ -137,6 +138,28 @@ def convert_html_to_image(html_file):
 
 def retrieve_common_keywords(Keywords,Pos_Neg_Res):
 
+    keywords_dict = dict()
+    for i in range(len(Keywords)):
+        for word in Keywords[i]:
+            if word not in keywords_dict:
+                keywords_dict[word] = 0
+            if Pos_Neg_Res[i] == 'Positive':
+                keywords_dict[word] = keywords_dict[word] + 1
+            else:
+                keywords_dict[word] = keywords_dict[word] - 1
+
+    sorrted_keywords = sorted(keywords_dict.items(), itemgetter(1))
+
+    max_common_keywords = 3
+    common_pos_keywords = []
+    common_neg_keywords = []
+
+    for i in range(max_common_keywords):
+        common_pos_keywords.append(sorrted_keywords[i][0])
+        common_neg_keywords.append(sorrted_keywords[len(sorrted_keywords) - 1 - i][0])
+
+
+    return common_pos_keywords, common_neg_keywords
 
 
 def main(Tweets, Emotional_Res, Pos_Neg_Res, Keywords, handle, avatar_url):
