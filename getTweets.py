@@ -2,7 +2,7 @@ import tweepy
 import csv
 
 
-maxTweets=5
+maxTweets=15
 
 def get_tweets(userName):
     #authorize twitter using the keys that we got from dev.twitter
@@ -21,8 +21,6 @@ def get_tweets(userName):
     #save the id of the oldest tweet
     oldest = all_tweets[-1].id - 1
 
-
-    #the return list of tweets shof anta el response w akhtar htrg3 eh w 7oto
     outtweets = [[tweet.text] for tweet in all_tweets]
     user_object = api.get_user(userName)
     avatar_url = user_object.profile_image_url

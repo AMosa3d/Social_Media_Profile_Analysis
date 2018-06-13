@@ -14,6 +14,7 @@ from flask import request
 from flask import make_response
 import getTweets
 import re
+import FinalTouch
 
 # Flask app should start in global layout
 app = Flask(__name__)
@@ -26,34 +27,33 @@ def webhook():
     print("Request:")
     print(json.dumps(req, indent=4))
 
-    res = processRequest(req)
 
-    res = json.dumps(res, indent=4)
+    res = processRequest(req)
+    res = json.dumps(res, indent=1)
     # print(res)
     r = make_response(res)
     r.headers['Content-Type'] = 'application/json'
     return r
 
-def del_Punctutation(s):
-    return re.sub(r'^https?://.[\r\n]', '',s, flags=re.MULTILINE)
 
 def processRequest(req):
     print ("started processing")
     if req.get("queryResult").get("action") != "Askingaboutreport":
         return {}
-    res = makeWebhookResult()
+    res = makeWebhookResult(req)
     return res
 
 
-def makeWebhookResult():
-    tweets = getTweets.get_tweets('@Ah_Samir1907')
-    tweets = [del_Punctutation(tweet[0]) for tweet in tweets]
-    speech = Emotional_GloVe.main(tweets)
-    print("Response:")
-    print(speech)
-
+def makeWebhookResult(req):
+    result = req.get("queryResult")
+    parameters = result.get("parameters")
+    handle = parameters.get("handle")
+    if handle is None:
+        return None
+    result = FinalTouch.main(handle)
+    print(result)
     return {
-        "fulfillmentText" : "testing",
+        "fulfillmentText" : result
 
 
     }
