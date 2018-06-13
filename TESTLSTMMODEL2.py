@@ -20,19 +20,12 @@ def LoadData():
     return TrainingSentences, TrainingLabels
 
 def main(tweets):
- #maxWordsLengthPerSentence = 25
- #TrainingSentences, TrainingLabels = LoadData()
-
+ 
  # load model from single file
 
 
  model_Lstm = load_model('Pos_Neg.h5')
- '''
- tokenizer = Tokenizer()
- tokenizer.fit_on_texts(TrainingSentences)
- with open('Pos_Neg_tokenizer.pickle', 'wb') as handle:
-     pickle.dump(tokenizer, handle, protocol=pickle.HIGHEST_PROTOCOL)
-'''
+ 
 
  with open('Pos_Neg_tokenizer.pickle', 'rb') as handle:
         tokenizer = pickle.load(handle)
