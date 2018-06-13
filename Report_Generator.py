@@ -82,14 +82,16 @@ def html_creator(avatar_url, handle_str, plot_path,Emotional_Res, Pos_Neg_Res, K
     table_tag2 = "</table> "
     table_headers = """<td>id</td>\n<td>Tweets</td>\n<td>Positive/Negative</td>\n<td>Emotional</td>\n<td>Keywords Extracted</td>"""
 
+    common_pos_keywords, common_neg_keywords = build_dictionary(Keywords,Pos_Neg_Res)
+
     positive_keywords = ""
     negative_keywords = ""
 
-    for i in range(len(Pos_Neg_Res)):
-        if Pos_Neg_Res[i] == "Positive":
-            positive_keywords = positive_keywords + keyword1 + Keywords[i] + keyword2 + "\n"
-        else:
-            negative_keywords = negative_keywords + keyword1 + Keywords[i] + keyword2 + "\n"
+    for i in range(len(common_pos_keywords)):
+        positive_keywords = positive_keywords + keyword1 + common_pos_keywords[i] + keyword2 + "\n"
+
+    for i in range(len(common_neg_keywords)):
+        negative_keywords = negative_keywords + keyword1 + common_neg_keywords[i] + keyword2 + "\n"
 
     table_content = ""
 
@@ -137,7 +139,7 @@ def main(Tweets, Emotional_Res, Pos_Neg_Res, Keywords, handle, avatar_url):
 
     plot_path = plot_emotional_function(Emotional_Res)
     plot_path = upload_image(plot_path)
-    html_file = html_creator(avatar_url,handle,plot_path,Emotional_Res, Pos_Neg_Res, Keywords, Tweets)
+    html_file = html_creator("https://pbs.twimg.com/profile_images/1002238455848595456/YJY8djgO_400x400.jpg",handle,plot_path,Emotional_Res, Pos_Neg_Res, Keywords, Tweets)
     html_image_path = convert_html_to_image(html_file)
     if (html_file == ""):
         return
@@ -146,3 +148,6 @@ def main(Tweets, Emotional_Res, Pos_Neg_Res, Keywords, handle, avatar_url):
 
     return report_url
 
+if __name__ == '__main__':
+    report = main(['Hello1', 'Hello2', 'Hello3'], ['Neutral', 'Sad', 'Happy', 'Hate', 'Anger', 'Happy'], ['Positive','Positive','Negative'], ['Shady', 'Emam', 'GP'], "@AMosa3d", "avatar_url")
+    print(report)
