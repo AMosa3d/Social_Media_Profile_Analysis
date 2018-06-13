@@ -166,7 +166,7 @@ def main(Tweets, Emotional_Res, Pos_Neg_Res, Keywords, handle, avatar_url):
 
     plot_path = plot_emotional_function(Emotional_Res)
     plot_path = upload_image(plot_path)
-    html_file = html_creator("https://pbs.twimg.com/profile_images/1002238455848595456/YJY8djgO_400x400.jpg",handle,plot_path,Emotional_Res, Pos_Neg_Res, Keywords, Tweets)
+    html_file = html_creator(avatar_url,handle,plot_path,Emotional_Res, Pos_Neg_Res, Keywords, Tweets)
     html_image_path = convert_html_to_image(html_file)
     if (html_file == ""):
         return
