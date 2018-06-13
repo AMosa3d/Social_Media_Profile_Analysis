@@ -82,7 +82,7 @@ def html_creator(avatar_url, handle_str, plot_path,Emotional_Res, Pos_Neg_Res, K
     table_tag2 = "</table> "
     table_headers = """<td>id</td>\n<td>Tweets</td>\n<td>Positive/Negative</td>\n<td>Emotional</td>\n<td>Keywords Extracted</td>"""
 
-    common_pos_keywords, common_neg_keywords = build_dictionary(Keywords,Pos_Neg_Res)
+    common_pos_keywords, common_neg_keywords = retrieve_common_keywords(Keywords,Pos_Neg_Res)
 
     positive_keywords = ""
     negative_keywords = ""
@@ -133,6 +133,10 @@ def convert_html_to_image(html_file):
     except pdfcrowd.Error as why:
         print(why)
         raise
+
+
+def retrieve_common_keywords(Keywords,Pos_Neg_Res):
+
 
 
 def main(Tweets, Emotional_Res, Pos_Neg_Res, Keywords, handle, avatar_url):
