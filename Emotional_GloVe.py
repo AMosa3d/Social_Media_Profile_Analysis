@@ -29,11 +29,11 @@ def get_tokens_list(Data):
 
     for i in range(1, len(Data)):
         #### to get the words from every sentences
-        t = ''
+        t = []
         tokens = nltk.word_tokenize(del_punctutation(Data[i].lower()))
         for token in tokens:
             if token not in stopWords:
-                t = t + token
+                t.append(token)
         #### add all tokens of the tweets to list
         tokensList.append(t)
 
@@ -115,8 +115,8 @@ def Train_Model(TrainingSentences, TrainingLabels, maxWordsLengthPerSentence):
     LSTM_Model = Sequential()
 
     LSTM_Model.add(Embedding(vocab_size, wordVectorSize, weights=[embedding_matrix], input_length=maxWordsLengthPerSentence, trainable=False))
-    LSTM_Model.add(Bidirectional(LSTM(128, activation='relu', dropout=0.2, recurrent_dropout=0.2)))
-    LSTM_Model.add(Dense(TrainingLabels.shape[1], activation='sigmoid'))
+    LSTM_Model.add(Bidirectional(LSTM(128, dropout=0.2, recurrent_dropout=0.2)))
+    LSTM_Model.add(Dense(TrainingLabels.shape[1], activation='softmax'))
 
 
     LSTM_Model.compile(
@@ -124,19 +124,21 @@ def Train_Model(TrainingSentences, TrainingLabels, maxWordsLengthPerSentence):
         optimizer='adam',
         metrics=['accuracy']
     )
-    leng = round(len(TrainingSentences) * .6)
+    #rmsprop
+
+    leng = round(len(TrainingSentences) * .8)
     leng2 = leng + round(len(TrainingSentences) * .2)
     LSTM_Model.fit(
         TrainingSentencesSequences[1:leng],
                    TrainingLabels[1:leng],
-                   epochs=9,
-                   validation_data=(TrainingSentencesSequences[leng:leng2], TrainingLabels[leng:leng2])
+                   epochs=5,
+                   #validation_data=(TrainingSentencesSequences[leng:leng2], TrainingLabels[leng:leng2])
     )
 
 
     loss, accuarcy = LSTM_Model.evaluate(
-        TrainingSentencesSequences[leng2:],
-        TrainingLabels[leng2:],
+        TrainingSentencesSequences[leng:],
+        TrainingLabels[leng:],
         batch_size=32
     )
 
@@ -192,9 +194,8 @@ def LoadTrainedModel():
 
     return tokenizer, model
 
-def main(input):
+def main(tweets):
     maxWordsLengthPerSentence = 25
-
 
     if not os.path.exists('emotional_model.h5'):
         TrainingSentences, TrainingLabels = LoadData()
@@ -202,15 +203,9 @@ def main(input):
 
     tokenizer, model = LoadTrainedModel()
 
-    TestingSentences = [
-        "I am happy",
-        "I am tired",
-        "I am sad",
-        "I am afraid",
-        "I am angry",
-    ]
 
-    Labels = Test_Model(model, input, tokenizer, maxWordsLengthPerSentence)
+    TestingSentences = tweets
+    Labels = Test_Model(model, TestingSentences, tokenizer, maxWordsLengthPerSentence)
     Res = []
 
     for i in range(len(Labels)):
@@ -224,5 +219,22 @@ def main(input):
             Res.append('Hate')
         elif Labels[i] == 4:
             Res.append('Anger')
-
+    #print(Res)
     return Res
+
+
+
+if __name__ == '__main__':
+    tweets = ["i love mimo","i love moka :D"]
+    main(tweets)
+
+'''
+    TestingSentences = [
+        "I am happy",
+        "I am tired",
+        "I am sad",
+        "I am afraid",
+        "I am angry",
+    ]
+'''
+
