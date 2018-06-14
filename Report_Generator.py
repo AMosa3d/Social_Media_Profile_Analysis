@@ -101,7 +101,7 @@ def html_creator(avatar_url, handle_str, plot_path,Emotional_Res, Pos_Neg_Res, K
         tweet_content = "<td>" + Tweets[i] + "</td>\n"
         pos_neg_content = "<td>" + Pos_Neg_Res[i] + "</td>\n"
         emotional_content = "<td>" + Emotional_Res[i] + "</td>\n"
-        keyword_content = "<td>" + Keywords[i] + "</td>\n"
+        keyword_content = "<td>" + ' , '.join(Keywords[i]) + "</td>\n"
         table_content = table_content + table_tr1 + id_content + tweet_content + pos_neg_content + emotional_content \
                         + keyword_content + table_tr2 + "\n"
 
@@ -148,7 +148,7 @@ def retrieve_common_keywords(Keywords,Pos_Neg_Res):
             else:
                 keywords_dict[word] = keywords_dict[word] - 1
 
-    sorrted_keywords = sorted(keywords_dict.items(), itemgetter(1))
+    sorrted_keywords = sorted(keywords_dict.items(), key=itemgetter(1))
 
     max_common_keywords = 3
     common_pos_keywords = []
