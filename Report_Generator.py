@@ -148,7 +148,7 @@ def retrieve_common_keywords(Keywords,Pos_Neg_Res):
             else:
                 keywords_dict[word] = keywords_dict[word] - 1
 
-    sorrted_keywords = sorted(keywords_dict.items(), key=itemgetter(1))
+    sorrted_keywords = sorted(keywords_dict.items(), key=itemgetter(1),reverse=True)
 
     max_common_keywords = 3
     common_pos_keywords = []
@@ -182,5 +182,5 @@ def main(Tweets, Emotional_Res, Pos_Neg_Res, Keywords, handle, avatar_url):
     return report_url
 
 if __name__ == '__main__':
-    report = main(['Hello1', 'Hello2', 'Hello3'], ['Neutral', 'Sad', 'Happy', 'Hate', 'Anger', 'Happy'], ['Positive','Positive','Negative'], ['Shady', 'Emam', 'GP'], "@AMosa3d", "avatar_url")
+    report = main(['Hello1', 'Hello2', 'Hello3'], ['Neutral', 'Sad', 'Happy', 'Hate', 'Anger', 'Happy'], ['Positive','Positive','Positive','Positive','Positive','Positive','Positive','Positive','Negative'], [['Hawaii'], ['College', 'AbdelrahmanMosaad'], ['CD'], ['EGYPT', 'Central'], ['Playstation Conference', 'E3'], [], ['EGYPT'], [], ['Shady']], "@AMosa3d", "avatar_url")
     print(report)
