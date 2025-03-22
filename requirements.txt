@@ -1,6 +1,6 @@
 guess-language-spirit==0.5.3
-gunicorn==19.8.1
+gunicorn==23.0.0
 linecache2==1.0.0
 numpy==1.14.2
-scipy==1.0.1
+scipy==1.10.0
 traceback2==1.4.0
